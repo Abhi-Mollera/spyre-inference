@@ -60,8 +60,8 @@ def make_config(
             layer.kv = n
             layers.append(layer)
         arch.__getitem__.side_effect = layers.__getitem__
-        config.model_config.get_num_kv_heads.side_effect = (
-            lambda _pc, arch_config=None: num_kv_heads if arch_config is None else arch_config.kv
+        config.model_config.get_num_kv_heads.side_effect = lambda _pc, arch_config=None: (
+            num_kv_heads if arch_config is None else arch_config.kv
         )
     return config
 
