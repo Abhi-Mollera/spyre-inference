@@ -173,10 +173,25 @@ def main():
             print(g8b_res["generated_text"].strip())
             print("-" * 60)
 
-    with open(args.output, "w", encoding="utf-8") as f:
-        json.dump(out_payload, f, indent=2)
+    try:
+        with open(args.output, "w", encoding="utf-8") as f:
+            json.dump(out_payload, f, indent=2)
+        print(f"\nComplete results and metrics saved to: {args.output}")
+    except PermissionError:
+        fallback_path = "/tmp/comparison_results.json"
+        with open(fallback_path, "w", encoding="utf-8") as f:
+            json.dump(out_payload, f, indent=2)
+        print(f"\nSaved to fallback path due to permissions: {fallback_path}")
 
-    print(f"\nComplete results and metrics saved to: {args.output}")
+    print("\n" + "=" * 80)
+    print("OVERALL PERFORMANCE SUMMARY")
+    print("=" * 80)
+    for model_id, m in metrics.items():
+        print(f"{model_id}:")
+        print(f"  Total time:     {m['elapsed_seconds']:.2f} s")
+        print(f"  Total tokens:   {m['total_tokens_generated']} tokens")
+        print(f"  Throughput:     {m['tokens_per_second']:.2f} tok/s")
+    print("=" * 80)
 
 
 if __name__ == "__main__":
