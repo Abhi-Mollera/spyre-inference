@@ -34,7 +34,9 @@ def _patch_granitemoehybrid_is_hybrid() -> None:
         from vllm.config.model import ModelConfig
 
         prop = getattr(ModelConfig, "is_hybrid", None)
-        if isinstance(prop, property) and not getattr(ModelConfig, "_spyre_patched_is_hybrid", False):
+        if isinstance(prop, property) and not getattr(
+            ModelConfig, "_spyre_patched_is_hybrid", False
+        ):
             orig_fget = prop.fget
 
             def is_hybrid_fixed(self) -> bool:
