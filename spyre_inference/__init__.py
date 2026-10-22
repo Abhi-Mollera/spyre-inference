@@ -28,13 +28,40 @@ os.environ.setdefault("TORCH_DEVICE_BACKEND_AUTOLOAD", "0")
 __version__ = importlib.metadata.version("spyre_inference")
 
 
+def _patch_granitemoehybrid_is_hybrid() -> None:
+    """Ensure models with layer_types=['full_attention', ...] are not misclassified as hybrid."""
+    try:
+        from vllm.config.model import ModelConfig
+
+        prop = getattr(ModelConfig, "is_hybrid", None)
+        if isinstance(prop, property) and not getattr(ModelConfig, "_spyre_patched_is_hybrid", False):
+            orig_fget = prop.fget
+
+            def is_hybrid_fixed(self) -> bool:
+                if not self._model_info.is_hybrid:
+                    return False
+                layer_types = getattr(self.hf_config, "layer_types", None)
+                if layer_types is not None and all(
+                    layer in ("attention", "full_attention") for layer in layer_types
+                ):
+                    return False
+                return orig_fget(self)
+
+            ModelConfig.is_hybrid = property(is_hybrid_fixed)
+            ModelConfig._spyre_patched_is_hybrid = True
+    except Exception:
+        pass
+
+
 def register():
     """Register the Spyre platform."""
+    _patch_granitemoehybrid_is_hybrid()
     return "spyre_inference.platform.TorchSpyrePlatform"
 
 
 def register_ops():
     """Register the Spyre OOT custom ops and model adaptations."""
+    _patch_granitemoehybrid_is_hybrid()
     from spyre_inference.custom_ops import register_all
     from spyre_inference.models import register_models
 
