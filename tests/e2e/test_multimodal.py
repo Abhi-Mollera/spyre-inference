@@ -116,6 +116,7 @@ def _generate(
 @pytest.mark.multimodal
 @pytest.mark.parametrize("enforce_eager", [True, False], ids=["eager", "compiled"])
 @pytest.mark.uses_subprocess
+@pytest.mark.timeout(3600)
 def test_single_image_prompt_produces_output(enforce_eager, monkeypatch):
     """Smoke: the whole vision path (conv patch embed -> vision rope -> padded
     SDPA -> patch merger -> projector norm -> decoder) runs and decodes text.
