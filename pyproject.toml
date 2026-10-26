@@ -374,7 +374,7 @@ markers = [
     "blip2: BLIP-2 Q-Former patch tests (tests/multimodal/test_blip2.py)",
     "granite4_vision: Granite Vision 4 patch tests (tests/multimodal/test_granite4_vision.py)",
     "multimodal: VLM tests. Local (tests/e2e/test_multimodal.py) is slow and needs a card; the upstream ones are host-side processor tests and need neither",
-    "rmsnorm: GemmaRMSNorm custom-op tests (tests/custom_ops/test_gemma_rms_norm.py)",
+    "rmsnorm: RMSNorm and GemmaRMSNorm custom-op tests (tests/custom_ops/test_rms_norm.py)",
     "granite_vision_e2e: End-to-end Granite Vision 4.1 tests (tests/e2e/test_granite_vision.py); slow, needs a card",
     "runtime: encoder inline-dispatch tests (tests/runtime/test_encoder_inline_dispatch.py); CPU-only",
 ]
